@@ -413,6 +413,73 @@ To create a key: **BambooHR > Profile icon > API Keys > Add New Key**
 
 ---
 
+## Examples
+
+Here are three real-world examples showing how Claude uses this MCP server.
+
+### Example 1: Check team availability
+
+**You say:** "Who's out next week on the Engineering team?"
+
+**What happens:** Claude calls `bamboohr_get_whos_out` with next week's date range, then cross-references with `bamboohr_list_employees` filtered to Engineering. It returns a summary like:
+
+> 3 people out next week in Engineering:
+> - **Sarah Chen** - PTO Mon-Wed
+> - **James Park** - Sick leave Monday
+> - **Lisa Nguyen** - PTO all week
+>
+> 12 of 15 team members available.
+
+### Example 2: Onboard a new hire
+
+**You say:** "Onboard Maria Torres starting March 17, Software Engineer in Platform, reports to Alex Kim, Austin office."
+
+**What happens:** Claude calls `bamboohr_create_employee` with the provided details, then calls `bamboohr_assign_time_off_policies` to set up standard PTO. It returns:
+
+> Created employee record for **Maria Torres** (ID: 4521)
+> - Department: Platform
+> - Job Title: Software Engineer
+> - Location: Austin, TX
+> - Supervisor: Alex Kim
+> - Start Date: 2026-03-17
+> - PTO policies assigned: Standard PTO, Sick Leave, Company Holidays
+
+### Example 3: Training compliance report
+
+**You say:** "Show me who's overdue on HIPAA training in the HR department."
+
+**What happens:** Claude calls `bamboohr_list_employees` to get HR department members, then `bamboohr_get_employee_trainings` for each to check HIPAA completion status. It returns:
+
+> **HIPAA Training Compliance - HR Department**
+>
+> 2 of 8 team members overdue:
+> - **Tom Rivera** - due Feb 15, 2026 (22 days overdue)
+> - **Amy Walsh** - due Mar 1, 2026 (9 days overdue)
+>
+> 6 members current. Next renewal due: Jun 2026 (Dana Lee).
+
+---
+
+## Privacy Policy
+
+This MCP server acts as a local bridge between Claude and your BambooHR account. Here is how data is handled:
+
+- **No data collection.** This server does not collect, store, or transmit any data to third parties. It does not phone home, send analytics, or log to external services.
+- **Local execution only.** The server runs on your machine as a local stdio process. All API calls go directly from your machine to BambooHR's API (`api.bamboohr.com`).
+- **Credentials stay local.** Your `BAMBOOHR_API_KEY` and `BAMBOOHR_SUBDOMAIN` are read from local environment variables and are never persisted, logged, or transmitted anywhere other than BambooHR's API.
+- **BambooHR's privacy policy applies.** Data returned from the BambooHR API is subject to [BambooHR's Privacy Policy](https://www.bamboohr.com/privacy-policy). This server does not cache or persist any API responses.
+- **You control access.** The API key's permissions in BambooHR determine what data this server can access. Use a limited-permission key to restrict scope.
+
+---
+
+## Support
+
+- **Issues:** [github.com/acalder-techpm/bamboohr-mcp/issues](https://github.com/acalder-techpm/bamboohr-mcp/issues)
+- **Email:** adam.calder@bamboohr.com
+- **Discussions:** [github.com/acalder-techpm/bamboohr-mcp/discussions](https://github.com/acalder-techpm/bamboohr-mcp/discussions)
+
+---
+
 ## Contributing
 
 PRs welcome. If you add a new tool or skill, follow the existing patterns in `src/tools/` and `skills/` and open a pull request with a brief description of the use case.

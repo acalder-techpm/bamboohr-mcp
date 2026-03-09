@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 import {
   GetEmployeeTrainingsSchema,
   CreateTrainingRecordSchema,
@@ -11,7 +11,9 @@ export const trainingTools = [
     name: "bamboohr_get_training_categories",
     description: "List all training categories defined in BambooHR.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/training/category");
     },
   },
@@ -20,7 +22,9 @@ export const trainingTools = [
     description:
       "List all training types (courses/programs) available in BambooHR. Each type can have a renewal frequency.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/training/type");
     },
   },
@@ -44,7 +48,9 @@ export const trainingTools = [
       },
       required: ["name"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof CreateTrainingTypeSchema>) {
+      const client = getClient();
       const parsed = CreateTrainingTypeSchema.parse(input);
       return client.post("/training/type", parsed);
     },
@@ -64,7 +70,9 @@ export const trainingTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof GetEmployeeTrainingsSchema>) {
+      const client = getClient();
       const parsed = GetEmployeeTrainingsSchema.parse(input);
       const params: Record<string, unknown> = {};
       if (parsed.completed !== undefined) params.completed = parsed.completed;
@@ -91,7 +99,9 @@ export const trainingTools = [
       },
       required: ["employeeId", "trainingTypeId"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof CreateTrainingRecordSchema>) {
+      const client = getClient();
       const parsed = CreateTrainingRecordSchema.parse(input);
       const { employeeId, ...body } = parsed;
       return client.post(`/employees/${employeeId}/training/record`, body);
@@ -113,6 +123,7 @@ export const trainingTools = [
       },
       required: ["employeeId", "trainingRecordId"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: {
       employeeId: string;
       trainingRecordId: string;
@@ -122,6 +133,7 @@ export const trainingTools = [
       hours?: number;
       cost?: number;
     }) {
+      const client = getClient();
       const { employeeId, trainingRecordId, ...body } = input;
       return client.put(
         `/employees/${employeeId}/training/record/${trainingRecordId}`,

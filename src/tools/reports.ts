@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 import { RunReportSchema, QueryDatasetSchema } from "../types.js";
 
 export const reportsTools = [
@@ -8,7 +8,9 @@ export const reportsTools = [
     description:
       "List all saved reports available in BambooHR (both standard and custom).",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/reports/custom");
     },
   },
@@ -32,7 +34,9 @@ export const reportsTools = [
       },
       required: ["reportId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof RunReportSchema>) {
+      const client = getClient();
       const parsed = RunReportSchema.parse(input);
       return client.get(`/reports/${parsed.reportId}`, {
         format: parsed.format ?? "JSON",
@@ -45,7 +49,9 @@ export const reportsTools = [
     description:
       "List all available datasets (structured data exports) in BambooHR.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/datasets");
     },
   },
@@ -59,7 +65,9 @@ export const reportsTools = [
       },
       required: ["datasetId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { datasetId: string }) {
+      const client = getClient();
       return client.get(`/datasets/${input.datasetId}/fields`);
     },
   },
@@ -85,7 +93,9 @@ export const reportsTools = [
       },
       required: ["datasetId", "fields"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof QueryDatasetSchema>) {
+      const client = getClient();
       const parsed = QueryDatasetSchema.parse(input);
       return client.post(`/datasets/${parsed.datasetId}/data`, {
         fields: parsed.fields,

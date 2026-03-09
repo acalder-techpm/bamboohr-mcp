@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 import {
   GetEmployeeSchema,
   ListEmployeesSchema,
@@ -27,7 +27,9 @@ export const employeeTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof GetEmployeeSchema>) {
+      const client = getClient();
       const parsed = GetEmployeeSchema.parse(input);
       const fields =
         parsed.fields ||
@@ -48,7 +50,9 @@ export const employeeTools = [
         },
       },
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof ListEmployeesSchema>) {
+      const client = getClient();
       const parsed = ListEmployeesSchema.parse(input);
       if (parsed.fields) {
         return client.get("/employees/directory", { fields: parsed.fields });
@@ -74,7 +78,9 @@ export const employeeTools = [
       },
       required: ["firstName", "lastName"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof CreateEmployeeSchema>) {
+      const client = getClient();
       const parsed = CreateEmployeeSchema.parse(input);
       return client.post("/employees", parsed);
     },
@@ -96,7 +102,9 @@ export const employeeTools = [
       },
       required: ["employeeId", "fields"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof UpdateEmployeeSchema>) {
+      const client = getClient();
       const parsed = UpdateEmployeeSchema.parse(input);
       return client.post(`/employees/${parsed.employeeId}`, parsed.fields);
     },
@@ -115,7 +123,9 @@ export const employeeTools = [
       },
       required: ["since"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { since: string }) {
+      const client = getClient();
       return client.get("/employees/changed", { since: input.since });
     },
   },
@@ -127,7 +137,9 @@ export const employeeTools = [
       type: "object" as const,
       properties: {},
     },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/company_information");
     },
   },

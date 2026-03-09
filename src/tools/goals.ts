@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 import {
   ListGoalsSchema,
   CreateGoalSchema,
@@ -18,7 +18,9 @@ export const goalsTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof ListGoalsSchema>) {
+      const client = getClient();
       const parsed = ListGoalsSchema.parse(input);
       return client.get(`/performance/employees/${parsed.employeeId}/goals`);
     },
@@ -34,7 +36,9 @@ export const goalsTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { employeeId: string }) {
+      const client = getClient();
       return client.get(`/performance/employees/${input.employeeId}/goals/aggregate`);
     },
   },
@@ -57,7 +61,9 @@ export const goalsTools = [
       },
       required: ["employeeId", "title"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof CreateGoalSchema>) {
+      const client = getClient();
       const parsed = CreateGoalSchema.parse(input);
       const { employeeId, ...body } = parsed;
       return client.post(`/performance/employees/${employeeId}/goals`, body);
@@ -75,7 +81,9 @@ export const goalsTools = [
       },
       required: ["goalId", "percentComplete"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof UpdateGoalProgressSchema>) {
+      const client = getClient();
       const parsed = UpdateGoalProgressSchema.parse(input);
       return client.put(`/performance/goals/${parsed.goalId}`, {
         percentComplete: parsed.percentComplete,
@@ -93,7 +101,9 @@ export const goalsTools = [
       },
       required: ["goalId"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: { goalId: string }) {
+      const client = getClient();
       return client.post(`/performance/goals/${input.goalId}/close`, {});
     },
   },
@@ -107,7 +117,9 @@ export const goalsTools = [
       },
       required: ["goalId"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: { goalId: string }) {
+      const client = getClient();
       return client.post(`/performance/goals/${input.goalId}/reopen`, {});
     },
   },
@@ -122,7 +134,9 @@ export const goalsTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { employeeId: string }) {
+      const client = getClient();
       return client.get(
         `/performance/employees/${input.employeeId}/goals/statusCounts`
       );

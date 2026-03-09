@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 import { CreateWebhookSchema, GetWebhookLogsSchema } from "../types.js";
 
 export const webhooksTools = [
@@ -7,7 +7,9 @@ export const webhooksTools = [
     name: "bamboohr_list_webhooks",
     description: "List all webhooks configured in BambooHR.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/webhooks");
     },
   },
@@ -21,7 +23,9 @@ export const webhooksTools = [
       },
       required: ["webhookId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { webhookId: string }) {
+      const client = getClient();
       return client.get(`/webhooks/${input.webhookId}`);
     },
   },
@@ -62,7 +66,9 @@ export const webhooksTools = [
       },
       required: ["name", "monitorFields", "postFields", "url"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof CreateWebhookSchema>) {
+      const client = getClient();
       const parsed = CreateWebhookSchema.parse(input);
       return client.post("/webhooks", parsed);
     },
@@ -86,7 +92,9 @@ export const webhooksTools = [
       },
       required: ["webhookId"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: { webhookId: string; [key: string]: unknown }) {
+      const client = getClient();
       const { webhookId, ...body } = input;
       return client.put(`/webhooks/${webhookId}`, body);
     },
@@ -101,7 +109,9 @@ export const webhooksTools = [
       },
       required: ["webhookId"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: { webhookId: string }) {
+      const client = getClient();
       return client.delete(`/webhooks/${input.webhookId}`);
     },
   },
@@ -120,7 +130,9 @@ export const webhooksTools = [
       },
       required: ["webhookId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof GetWebhookLogsSchema>) {
+      const client = getClient();
       const parsed = GetWebhookLogsSchema.parse(input);
       const params: Record<string, string> = {};
       if (parsed.lastAttemptedDate)
@@ -132,7 +144,9 @@ export const webhooksTools = [
     name: "bamboohr_get_webhook_monitor_fields",
     description: "Get all employee fields that can be monitored by webhooks.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/webhooks/monitor_fields");
     },
   },

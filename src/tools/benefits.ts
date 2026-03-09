@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 import { CreateDependentSchema } from "../types.js";
 
 export const benefitsTools = [
@@ -8,7 +8,9 @@ export const benefitsTools = [
     description:
       "Get all benefit plans offered by the company (health, dental, vision, 401k, etc.).",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/benefits/company_benefits");
     },
   },
@@ -23,7 +25,9 @@ export const benefitsTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { employeeId: string }) {
+      const client = getClient();
       return client.get(`/benefits/employees/${input.employeeId}/member_benefits`);
     },
   },
@@ -31,7 +35,9 @@ export const benefitsTools = [
     name: "bamboohr_get_benefit_coverages",
     description: "Get available benefit coverage types (e.g. 'Employee Only', 'Employee + Spouse').",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/benefits/coverages");
     },
   },
@@ -39,7 +45,9 @@ export const benefitsTools = [
     name: "bamboohr_get_benefit_deduction_types",
     description: "Get all benefit deduction types for payroll processing.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/benefits/deduction_types");
     },
   },
@@ -54,7 +62,9 @@ export const benefitsTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { employeeId: string }) {
+      const client = getClient();
       return client.get(`/employees/${input.employeeId}/dependents`);
     },
   },
@@ -77,7 +87,9 @@ export const benefitsTools = [
       },
       required: ["employeeId", "firstName", "lastName", "relationship"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof CreateDependentSchema>) {
+      const client = getClient();
       const parsed = CreateDependentSchema.parse(input);
       const { employeeId, ...body } = parsed;
       return client.post(`/employees/${employeeId}/dependents`, body);
@@ -94,7 +106,9 @@ export const benefitsTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { employeeId: string }) {
+      const client = getClient();
       return client.get(`/benefits/employees/${input.employeeId}/member_benefit_events`);
     },
   },

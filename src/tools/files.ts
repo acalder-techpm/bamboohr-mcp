@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 import { UploadEmployeeFileSchema } from "../types.js";
 
 export const filesTools = [
@@ -14,7 +14,9 @@ export const filesTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { employeeId: string }) {
+      const client = getClient();
       return client.get(`/employees/${input.employeeId}/files/view`);
     },
   },
@@ -29,7 +31,9 @@ export const filesTools = [
       },
       required: ["employeeId", "fileId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { employeeId: string; fileId: string }) {
+      const client = getClient();
       return client.get(`/employees/${input.employeeId}/files/${input.fileId}`);
     },
   },
@@ -51,7 +55,9 @@ export const filesTools = [
       },
       required: ["employeeId", "fileName", "fileContent"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof UploadEmployeeFileSchema>) {
+      const client = getClient();
       const parsed = UploadEmployeeFileSchema.parse(input);
       return client.post(`/employees/${parsed.employeeId}/files`, {
         fileName: parsed.fileName,
@@ -72,7 +78,9 @@ export const filesTools = [
       },
       required: ["employeeId", "fileId"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: { employeeId: string; fileId: string }) {
+      const client = getClient();
       return client.delete(`/employees/${input.employeeId}/files/${input.fileId}`);
     },
   },
@@ -80,7 +88,9 @@ export const filesTools = [
     name: "bamboohr_get_company_files",
     description: "Get all company-level file categories and files.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/files/view");
     },
   },
@@ -94,7 +104,9 @@ export const filesTools = [
       },
       required: ["categoryName"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: { categoryName: string }) {
+      const client = getClient();
       return client.post("/files/categories", { categoryName: input.categoryName });
     },
   },

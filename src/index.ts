@@ -1,10 +1,14 @@
 #!/usr/bin/env node
+import { readFileSync } from "fs";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
+import axios from "axios";
+import { BambooHRClient } from "./client.js";
+import { setClient } from "./context.js";
 
 import { employeeTools } from "./tools/employees.js";
 import { timeOffTools } from "./tools/time-off.js";
@@ -34,6 +38,18 @@ if (!process.env.BAMBOOHR_SUBDOMAIN) {
   process.exit(1);
 }
 
+// ─── Initialize client ──────────────────────────────────────────────────────
+const client = new BambooHRClient({
+  apiKey: process.env.BAMBOOHR_API_KEY,
+  subdomain: process.env.BAMBOOHR_SUBDOMAIN,
+});
+setClient(client);
+
+// ─── Read version from package.json ──────────────────────────────────────────
+const pkg = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf-8")
+);
+
 // ─── Merge all tools ─────────────────────────────────────────────────────────
 type ToolDef = {
   name: string;
@@ -42,6 +58,10 @@ type ToolDef = {
     type: "object";
     properties: Record<string, unknown>;
     required?: string[];
+  };
+  annotations?: {
+    readOnlyHint?: boolean;
+    destructiveHint?: boolean;
   };
   execute: (input: unknown) => Promise<unknown>;
 };
@@ -66,7 +86,7 @@ const toolMap = new Map<string, ToolDef>(allTools.map((t) => [t.name, t]));
 const server = new Server(
   {
     name: "bamboohr-mcp",
-    version: "0.1.0",
+    version: pkg.version,
   },
   {
     capabilities: { tools: {} },
@@ -74,10 +94,11 @@ const server = new Server(
 );
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: allTools.map(({ name, description, inputSchema }) => ({
+  tools: allTools.map(({ name, description, inputSchema, annotations }) => ({
     name,
     description,
     inputSchema,
+    ...(annotations ? { annotations } : {}),
   })),
 }));
 
@@ -103,7 +124,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       ],
     };
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
+    let message: string;
+    if (axios.isAxiosError(err)) {
+      const status = err.response?.status ?? "unknown";
+      const body = JSON.stringify(err.response?.data)?.slice(0, 500) ?? "";
+      message = `HTTP ${status}: ${body}`;
+    } else {
+      message = err instanceof Error ? err.message : String(err);
+    }
     return {
       content: [{ type: "text", text: `BambooHR API error: ${message}` }],
       isError: true,
@@ -116,7 +144,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   process.stderr.write(
-    `bamboohr-mcp running | subdomain: ${process.env.BAMBOOHR_SUBDOMAIN} | ${allTools.length} tools loaded\n`
+    `bamboohr-mcp v${pkg.version} running | subdomain: ${process.env.BAMBOOHR_SUBDOMAIN} | ${allTools.length} tools loaded\n`
   );
 }
 

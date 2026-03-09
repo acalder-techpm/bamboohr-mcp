@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 import {
   GetTimeOffRequestsSchema,
   CreateTimeOffRequestSchema,
@@ -13,7 +13,9 @@ export const timeOffTools = [
     name: "bamboohr_get_time_off_types",
     description: "List all available time off types (e.g. PTO, Sick, Bereavement).",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/meta/time_off/types");
     },
   },
@@ -21,7 +23,9 @@ export const timeOffTools = [
     name: "bamboohr_get_time_off_policies",
     description: "List all time off policies defined in BambooHR.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/meta/time_off/policies");
     },
   },
@@ -43,7 +47,9 @@ export const timeOffTools = [
       },
       required: ["start", "end"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof GetTimeOffRequestsSchema>) {
+      const client = getClient();
       const parsed = GetTimeOffRequestsSchema.parse(input);
       return client.get("/time_off/requests", parsed);
     },
@@ -62,7 +68,9 @@ export const timeOffTools = [
       },
       required: ["employeeId", "timeOffTypeId", "start", "end"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof CreateTimeOffRequestSchema>) {
+      const client = getClient();
       const parsed = CreateTimeOffRequestSchema.parse(input);
       const body = {
         status: "approved",
@@ -87,7 +95,9 @@ export const timeOffTools = [
       },
       required: ["requestId", "status"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof UpdateTimeOffStatusSchema>) {
+      const client = getClient();
       const parsed = UpdateTimeOffStatusSchema.parse(input);
       return client.post(`/time_off/requests/${parsed.requestId}/status`, {
         status: parsed.status,
@@ -107,7 +117,9 @@ export const timeOffTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof GetTimeOffBalanceSchema>) {
+      const client = getClient();
       const parsed = GetTimeOffBalanceSchema.parse(input);
       const params: Record<string, string> = {};
       if (parsed.date) params.date = parsed.date;
@@ -129,7 +141,9 @@ export const timeOffTools = [
       },
       required: ["start", "end"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof GetWhosOutSchema>) {
+      const client = getClient();
       const parsed = GetWhosOutSchema.parse(input);
       return client.get("/time_off/whos_out", { start: parsed.start, end: parsed.end });
     },
@@ -155,7 +169,9 @@ export const timeOffTools = [
       },
       required: ["employeeId", "policyAssignments"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: { employeeId: string; policyAssignments: unknown[] }) {
+      const client = getClient();
       return client.put(
         `/employees/${input.employeeId}/time_off/policies`,
         input.policyAssignments

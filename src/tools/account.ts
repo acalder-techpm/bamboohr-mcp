@@ -1,4 +1,4 @@
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 
 export const accountTools = [
   {
@@ -6,7 +6,9 @@ export const accountTools = [
     description:
       "Get all available employee fields — both standard BambooHR fields and custom fields — with their IDs, names, and types.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/meta/fields");
     },
   },
@@ -15,7 +17,9 @@ export const accountTools = [
     description:
       "Get all tabular (table-based) fields like job history, compensation history, and education.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/meta/tabular_fields");
     },
   },
@@ -24,7 +28,9 @@ export const accountTools = [
     description:
       "Get all BambooHR user accounts including their employee ID, email, role, and last login.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/meta/users");
     },
   },
@@ -32,7 +38,9 @@ export const accountTools = [
     name: "bamboohr_get_countries",
     description: "Get the list of countries supported by BambooHR.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/meta/countries");
     },
   },
@@ -49,7 +57,9 @@ export const accountTools = [
       },
       required: ["countryId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { countryId: string }) {
+      const client = getClient();
       return client.get(`/meta/countries/${input.countryId}/states`);
     },
   },
@@ -64,7 +74,9 @@ export const accountTools = [
       },
       required: ["fieldId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { fieldId: string }) {
+      const client = getClient();
       return client.get(`/meta/lists/${input.fieldId}`);
     },
   },
@@ -91,10 +103,12 @@ export const accountTools = [
       },
       required: ["fieldId", "options"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: {
       fieldId: string;
       options: Array<{ id?: string; value: string; archived?: string }>;
     }) {
+      const client = getClient();
       return client.put(`/meta/lists/${input.fieldId}`, { options: input.options });
     },
   },

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 import {
   GetTimesheetEntriesSchema,
   ClockInSchema,
@@ -21,7 +21,9 @@ export const timeTrackingTools = [
       },
       required: ["start", "end"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof GetTimesheetEntriesSchema>) {
+      const client = getClient();
       const parsed = GetTimesheetEntriesSchema.parse(input);
       const params: Record<string, string> = {
         start: parsed.start,
@@ -46,7 +48,9 @@ export const timeTrackingTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof ClockInSchema>) {
+      const client = getClient();
       const parsed = ClockInSchema.parse(input);
       return client.post("/time_tracking/clock_in", {
         employeeId: parsed.employeeId,
@@ -69,7 +73,9 @@ export const timeTrackingTools = [
       },
       required: ["employeeId"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof ClockOutSchema>) {
+      const client = getClient();
       const parsed = ClockOutSchema.parse(input);
       return client.post("/time_tracking/clock_out", {
         employeeId: parsed.employeeId,
@@ -91,7 +97,9 @@ export const timeTrackingTools = [
       },
       required: ["employeeId", "date", "hours"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: z.infer<typeof CreateHourEntriesSchema>) {
+      const client = getClient();
       const parsed = CreateHourEntriesSchema.parse(input);
       return client.post("/time_tracking/hour_entries/store", {
         entries: [
@@ -110,7 +118,9 @@ export const timeTrackingTools = [
     name: "bamboohr_list_break_policies",
     description: "List all meal and rest break policies configured in BambooHR.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/time_tracking/break_policies");
     },
   },
@@ -126,7 +136,9 @@ export const timeTrackingTools = [
       },
       required: ["employeeId", "date"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: { employeeId: string; date: string }) {
+      const client = getClient();
       return client.get(
         `/time_tracking/employees/${input.employeeId}/break_availability`,
         { date: input.date }

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { client } from "../client.js";
+import { getClient } from "../context.js";
 import {
   CreateJobOpeningSchema,
   CreateCandidateSchema,
@@ -13,7 +13,9 @@ export const atsTools = [
     description:
       "List all job openings with summary info: title, department, location, status, and open count.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/applicant_tracking/jobs");
     },
   },
@@ -35,7 +37,9 @@ export const atsTools = [
       },
       required: ["jobTitle"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof CreateJobOpeningSchema>) {
+      const client = getClient();
       const parsed = CreateJobOpeningSchema.parse(input);
       return client.post("/applicant_tracking/jobs", parsed);
     },
@@ -44,7 +48,9 @@ export const atsTools = [
     name: "bamboohr_get_company_locations",
     description: "Get all company locations used in job postings and employee records.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/applicant_tracking/locations");
     },
   },
@@ -65,7 +71,9 @@ export const atsTools = [
       },
       required: ["firstName", "lastName"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof CreateCandidateSchema>) {
+      const client = getClient();
       const parsed = CreateCandidateSchema.parse(input);
       return client.post("/applicant_tracking/candidates", parsed);
     },
@@ -82,7 +90,9 @@ export const atsTools = [
       },
       required: ["jobId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof GetJobApplicationsSchema>) {
+      const client = getClient();
       const parsed = GetJobApplicationsSchema.parse(input);
       const params: Record<string, string> = {};
       if (parsed.statusId) params.statusId = parsed.statusId;
@@ -93,7 +103,9 @@ export const atsTools = [
     name: "bamboohr_get_applicant_statuses",
     description: "Get all applicant statuses defined in the ATS pipeline.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/applicant_tracking/statuses");
     },
   },
@@ -110,7 +122,9 @@ export const atsTools = [
       },
       required: ["applicationId", "statusId"],
     },
+    annotations: { readOnlyHint: true },
     async execute(input: z.infer<typeof UpdateApplicantStatusSchema>) {
+      const client = getClient();
       const parsed = UpdateApplicantStatusSchema.parse(input);
       return client.post(
         `/applicant_tracking/applications/${parsed.applicationId}/status`,
@@ -129,7 +143,9 @@ export const atsTools = [
       },
       required: ["applicationId", "comment"],
     },
+    annotations: { destructiveHint: true },
     async execute(input: { applicationId: string; comment: string }) {
+      const client = getClient();
       return client.post(
         `/applicant_tracking/applications/${input.applicationId}/comments`,
         { comment: input.comment }
@@ -140,7 +156,9 @@ export const atsTools = [
     name: "bamboohr_get_hiring_leads",
     description: "Get a list of employees who can be assigned as hiring leads.",
     inputSchema: { type: "object" as const, properties: {} },
+    annotations: { readOnlyHint: true },
     async execute() {
+      const client = getClient();
       return client.get("/applicant_tracking/hiring_leads");
     },
   },
