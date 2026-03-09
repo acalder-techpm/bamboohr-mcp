@@ -1,0 +1,37 @@
+{
+  "name": "bamboohr-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for BambooHR — gives Claude access to employees, time-off, ATS, benefits, training, goals, and more",
+  "keywords": ["mcp", "bamboohr", "hr", "hris", "claude", "anthropic"],
+  "homepage": "https://github.com/bamboohr/bamboohr-mcp",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "bamboohr-mcp": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "skills",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "axios": "^1.7.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
