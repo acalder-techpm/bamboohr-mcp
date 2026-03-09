@@ -1,30 +1,75 @@
-# bamboohr-mcp
+<div align="center">
 
-A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that gives Claude full access to [BambooHR](https://www.bamboohr.com) — employees, time off, time tracking, ATS, benefits, training, goals, reports, files, and webhooks.
+# 🌿 bamboohr-mcp
 
-## Features
+**Give Claude full access to your BambooHR — employees, time off, hiring, benefits, training, and more.**
 
-- **50+ MCP tools** covering the full BambooHR API surface
-- **30 role-based skills** for HR admins, managers, recruiters, employees, payroll, training, and automation teams
-- Ships as an `npx`-runnable npm package — no server to deploy
-- Works in Claude Desktop, Claude.ai, and any MCP-compatible client
+[![npm version](https://img.shields.io/npm/v/bamboohr-mcp?color=4CAF50&logo=npm)](https://www.npmjs.com/package/bamboohr-mcp)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen?logo=node.js)](https://nodejs.org)
+[![MCP](https://img.shields.io/badge/MCP-compatible-blueviolet)](https://modelcontextprotocol.io)
+
+</div>
+
+---
+
+A [Model Context Protocol](https://modelcontextprotocol.io) server that connects Claude to BambooHR. Install once, then talk to your HR data in plain English — no dashboards, no manual exports.
+
+```
+"Who's out next week?"
+"Onboard Sarah Chen starting Monday — Engineering, reports to Maria."
+"Show training compliance for the Sales team."
+"Approve all pending PTO requests for my team."
+"What's our average time-to-fill for engineering roles?"
+```
+
+---
+
+## What's included
+
+<table>
+<tr>
+<td valign="top" width="50%">
+
+**🔧 74 MCP Tools**
+Full BambooHR API coverage across 11 modules — employees, time off, time tracking, ATS, benefits, training, goals, reports, webhooks, files, and metadata.
+
+**📦 Zero-deploy setup**
+Ships as an `npx`-runnable package. Add two lines to your Claude config and you're done.
+
+</td>
+<td valign="top" width="50%">
+
+**🎭 30 Role-Based Skills**
+Pre-built workflows for HR admins, managers, recruiters, employees, payroll, L&D, and automation admins — organized by who uses them.
+
+**🔌 Works everywhere**
+Claude Desktop, Claude Code CLI, or any MCP-compatible client.
+
+</td>
+</tr>
+</table>
+
+---
 
 ## Quickstart
 
-### 1. Get your BambooHR API key
+### Step 1 — Get your BambooHR API key
 
 1. Log in to BambooHR
-2. Go to your profile icon (top right) > **API Keys**
-3. Click **Add New Key**, give it a name, and copy the key
+2. Click your profile icon (top right) > **API Keys**
+3. Click **Add New Key**, name it, and copy it
 
-Your subdomain is the part before `.bamboohr.com` in your URL (e.g. `acme` from `acme.bamboohr.com`).
+Your subdomain is the prefix in your BambooHR URL — e.g. `acme` from `acme.bamboohr.com`.
 
-### 2. Configure Claude Desktop
+---
 
-Add the following to your `claude_desktop_config.json`:
+### Step 2 — Add to Claude Desktop
 
-**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+Edit your config file:
+
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 
 ```json
 {
@@ -41,9 +86,11 @@ Add the following to your `claude_desktop_config.json`:
 }
 ```
 
-Then restart Claude Desktop.
+Restart Claude Desktop.
 
-### 3. Configure Claude Code (CLI)
+---
+
+### Step 3 — Or add to Claude Code (CLI)
 
 ```bash
 claude mcp add bamboohr \
@@ -52,7 +99,9 @@ claude mcp add bamboohr \
   -- npx -y bamboohr-mcp
 ```
 
-### 4. Verify it works
+---
+
+### Step 4 — Verify
 
 Open Claude and ask: **"Show me the BambooHR employee directory"**
 
@@ -60,7 +109,9 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 
 ## Available Tools
 
-### Employees
+<details>
+<summary><strong>👤 Employees</strong> — 6 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_get_employee` | Get an employee record by ID |
@@ -70,7 +121,11 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_get_updated_employee_ids` | Get IDs of recently changed employees |
 | `bamboohr_get_company_info` | Get company account details |
 
-### Time Off
+</details>
+
+<details>
+<summary><strong>🏖️ Time Off</strong> — 8 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_get_time_off_types` | List all leave types |
@@ -82,7 +137,11 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_get_whos_out` | See who is out during a date range |
 | `bamboohr_assign_time_off_policies` | Assign policies to an employee |
 
-### Time Tracking
+</details>
+
+<details>
+<summary><strong>⏱️ Time Tracking</strong> — 5 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_get_timesheet_entries` | Get clock/hour entries |
@@ -91,7 +150,11 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_list_break_policies` | List break policies |
 | `bamboohr_list_employee_break_availability` | Check break availability |
 
-### Applicant Tracking (ATS)
+</details>
+
+<details>
+<summary><strong>🎯 Applicant Tracking (ATS)</strong> — 9 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_list_job_summaries` | List all job openings |
@@ -104,7 +167,11 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_get_hiring_leads` | List available hiring leads |
 | `bamboohr_get_company_locations` | List company locations |
 
-### Benefits
+</details>
+
+<details>
+<summary><strong>🏥 Benefits</strong> — 7 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_get_company_benefits` | List all benefit plans |
@@ -115,7 +182,11 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_create_employee_dependent` | Add a dependent |
 | `bamboohr_get_member_benefit_events` | Get benefit life events |
 
-### Reports
+</details>
+
+<details>
+<summary><strong>📊 Reports & Datasets</strong> — 5 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_list_reports` | List all saved reports |
@@ -124,7 +195,11 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_get_dataset_fields` | Get fields for a dataset |
 | `bamboohr_query_dataset` | Query a dataset with filters |
 
-### Training
+</details>
+
+<details>
+<summary><strong>🎓 Training</strong> — 6 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_get_training_categories` | List training categories |
@@ -134,7 +209,11 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_create_training_record` | Assign training to an employee |
 | `bamboohr_update_training_record` | Update a training record |
 
-### Goals
+</details>
+
+<details>
+<summary><strong>🏆 Goals & Performance</strong> — 7 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_list_goals` | Get goals for an employee |
@@ -144,7 +223,11 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_close_goal` / `bamboohr_reopen_goal` | Close or reopen a goal |
 | `bamboohr_get_goal_status_counts` | Get goal status breakdown |
 
-### Webhooks
+</details>
+
+<details>
+<summary><strong>🔔 Webhooks</strong> — 7 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_list_webhooks` | List all webhooks |
@@ -155,7 +238,11 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_get_webhook_logs` | View delivery logs |
 | `bamboohr_get_webhook_monitor_fields` | List monitorable fields |
 
-### Files
+</details>
+
+<details>
+<summary><strong>📁 Files</strong> — 6 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_get_employee_files` | List files for an employee |
@@ -165,7 +252,11 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_get_company_files` | List company-level files |
 | `bamboohr_create_employee_file_category` | Create a file category |
 
-### Account & Metadata
+</details>
+
+<details>
+<summary><strong>⚙️ Account & Metadata</strong> — 7 tools</summary>
+
 | Tool | Description |
 |------|-------------|
 | `bamboohr_get_fields` | List all employee fields |
@@ -176,85 +267,112 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 | `bamboohr_get_list_field_details` | Get options for a list field |
 | `bamboohr_update_list_field_values` | Add/update list field options |
 
+</details>
+
 ---
 
-## Skills (Role-Based Prompts)
+## Skills — Role-Based Workflows
 
-Copy the skills from the `skills/` directory to `~/.claude/skills/` to use them in Claude Code.
+Skills are pre-built prompts that handle common HR workflows end-to-end. Copy them to `~/.claude/skills/` to use them in Claude Code.
 
 ```bash
-# Install all skills
-cp -r skills/hr-admin ~/.claude/skills/
-cp -r skills/hr-manager ~/.claude/skills/
-cp -r skills/recruiter ~/.claude/skills/
-cp -r skills/manager ~/.claude/skills/
-cp -r skills/employee ~/.claude/skills/
-cp -r skills/payroll ~/.claude/skills/
-cp -r skills/training ~/.claude/skills/
-cp -r skills/automation ~/.claude/skills/
+# Install all skills at once
+cp -r skills/* ~/.claude/skills/
 ```
 
-### HR Admin (6 skills)
-| Skill | Trigger Example |
-|-------|----------------|
-| `onboard-employee` | "Onboard Sarah Chen starting Monday" |
-| `offboard-employee` | "Process termination for Bob Lee, last day Friday" |
-| `bulk-update-records` | "Update all Engineering employees to the new location" |
-| `manage-documents` | "Show me Jane Doe's files" |
-| `sync-org-changes` | "Move Alex to the Platform team reporting to Maria" |
-| `audit-employee-data` | "Audit all employee records for missing emails" |
+---
 
-### HR Manager / HRBP (5 skills)
-| Skill | Trigger Example |
-|-------|----------------|
+### 🗂️ HR Admin
+*For the people running day-to-day HR operations.*
+
+| Skill | Try saying... |
+|-------|--------------|
+| `onboard-employee` | "Onboard Sarah Chen starting Monday in Engineering" |
+| `offboard-employee` | "Process termination for Bob Lee, last day is Friday" |
+| `bulk-update-records` | "Update all Engineering employees to the Austin office" |
+| `manage-documents` | "Show me Jane Doe's employee files" |
+| `sync-org-changes` | "Move Alex to the Platform team reporting to Maria" |
+| `audit-employee-data` | "Find all employees missing a work email" |
+
+---
+
+### 📈 HR Manager / HRBP
+*For strategic HR visibility, analytics, and reporting.*
+
+| Skill | Try saying... |
+|-------|--------------|
 | `headcount-report` | "Headcount report by department" |
 | `workforce-snapshot` | "Give me a workforce snapshot" |
 | `run-custom-report` | "Run a report of all employees in California" |
 | `performance-overview` | "Performance overview for the Engineering team" |
 | `new-hire-trends` | "Show new hires for Q1 2025" |
 
-### Recruiter / TA (4 skills)
-| Skill | Trigger Example |
-|-------|----------------|
-| `post-job-opening` | "Post a Senior Engineer role in Austin" |
+---
+
+### 🎯 Recruiter / Talent Acquisition
+*For managing job openings, candidates, and hiring pipelines.*
+
+| Skill | Try saying... |
+|-------|--------------|
+| `post-job-opening` | "Post a Senior Engineer role in Austin, TX" |
 | `review-pipeline` | "Review the pipeline for the Product Manager role" |
 | `advance-candidate` | "Move Jane Smith to the Final Interview stage" |
 | `hiring-velocity-report` | "What's our average time-to-fill?" |
 
-### Manager / Team Lead (5 skills)
-| Skill | Trigger Example |
-|-------|----------------|
-| `approve-time-off` | "Review pending PTO for my team" |
+---
+
+### 👔 Manager / Team Lead
+*For team-level visibility and day-to-day approvals.*
+
+| Skill | Try saying... |
+|-------|--------------|
+| `approve-time-off` | "Review pending PTO requests for my team" |
 | `team-availability` | "Who's out next week?" |
 | `team-directory` | "Show me my team roster" |
-| `review-team-goals` | "Show team goal progress" |
+| `review-team-goals` | "Show team goal progress for Q2" |
 | `approve-timesheets` | "Review timesheets for last week" |
 
-### Employee Self-Service (4 skills)
-| Skill | Trigger Example |
-|-------|----------------|
+---
+
+### 🙋 Employee Self-Service
+*For employees managing their own HR needs.*
+
+| Skill | Try saying... |
+|-------|--------------|
 | `request-time-off` | "Request 3 days off starting June 10" |
 | `check-leave-balance` | "How many PTO days do I have left?" |
 | `update-profile` | "Update my home address in BambooHR" |
 | `view-my-trainings` | "What trainings am I assigned?" |
 
-### Payroll & Benefits Admin (3 skills)
-| Skill | Trigger Example |
-|-------|----------------|
+---
+
+### 💼 Payroll & Benefits Admin
+*For managing benefits enrollment and compensation data.*
+
+| Skill | Try saying... |
+|-------|--------------|
 | `benefits-status-check` | "Check benefits enrollment for John Doe" |
 | `dependent-enrollment` | "Add a dependent for Sarah Chen — newborn daughter" |
 | `compensation-audit` | "Run a compensation audit for Engineering" |
 
-### Training & L&D (3 skills)
-| Skill | Trigger Example |
-|-------|----------------|
+---
+
+### 🎓 Training & L&D
+*For tracking learning programs and compliance.*
+
+| Skill | Try saying... |
+|-------|--------------|
 | `assign-training` | "Assign HIPAA training to all new hires in HR" |
 | `compliance-report` | "Training compliance report for Q2" |
-| `manage-catalog` | "Show our training catalog" |
+| `manage-catalog` | "Show our full training catalog" |
 
-### Automation Admin (3 skills)
-| Skill | Trigger Example |
-|-------|----------------|
+---
+
+### ⚡ Automation Admin
+*For teams integrating BambooHR with other systems via webhooks.*
+
+| Skill | Try saying... |
+|-------|--------------|
 | `setup-webhook` | "Create a webhook that fires when job title changes" |
 | `debug-webhook` | "Show recent webhook logs for my HRIS sync" |
 | `automation-overview` | "What automations are connected to BambooHR?" |
@@ -264,13 +382,13 @@ cp -r skills/automation ~/.claude/skills/
 ## Development
 
 ```bash
-git clone https://github.com/bamboohr/bamboohr-mcp
+git clone https://github.com/acalder-techpm/bamboohr-mcp
 cd bamboohr-mcp
 npm install
 npm run build
 ```
 
-Test locally:
+**Test locally:**
 
 ```bash
 export BAMBOOHR_API_KEY=your-key
@@ -278,7 +396,7 @@ export BAMBOOHR_SUBDOMAIN=your-subdomain
 node dist/index.js
 ```
 
-Use the [MCP Inspector](https://github.com/modelcontextprotocol/inspector) for interactive testing:
+**Interactive testing with MCP Inspector:**
 
 ```bash
 npx @modelcontextprotocol/inspector node dist/index.js
@@ -288,14 +406,20 @@ npx @modelcontextprotocol/inspector node dist/index.js
 
 ## Authentication
 
-BambooHR uses HTTP Basic Auth with your API key as the username and any string as the password. This MCP server handles auth automatically using the `BAMBOOHR_API_KEY` environment variable.
+BambooHR uses HTTP Basic Auth with your API key as the username. This server handles it automatically — just set `BAMBOOHR_API_KEY`.
 
-To generate an API key: BambooHR > Profile icon > **API Keys** > Add New Key.
+> **Tip:** API keys inherit the permissions of the user who created them. Use an Admin user's key for full access, or a limited user's key for read-only integrations.
 
-Note: API keys have the same permissions as the user who created them. For full access, use an Admin user's API key. For read-only integrations, use a limited-access user.
+To create a key: **BambooHR > Profile icon > API Keys > Add New Key**
+
+---
+
+## Contributing
+
+PRs welcome. If you add a new tool or skill, follow the existing patterns in `src/tools/` and `skills/` and open a pull request with a brief description of the use case.
 
 ---
 
 ## License
 
-MIT
+[MIT](LICENSE) — made with ☕ and Claude.
