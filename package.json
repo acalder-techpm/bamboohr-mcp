@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "MCP server for BambooHR — gives Claude access to employees, time-off, ATS, benefits, training, goals, and more",
   "keywords": ["mcp", "bamboohr", "hr", "hris", "claude", "anthropic"],
-  "homepage": "https://github.com/bamboohr/bamboohr-mcp",
+  "homepage": "https://github.com/acalder-techpm/bamboohr-mcp",
   "license": "MIT",
   "type": "module",
   "bin": {
