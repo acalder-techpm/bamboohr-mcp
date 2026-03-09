@@ -1,6 +1,5 @@
 <div align="center">
-
-# 🌿 bamboohr-mcp
+<img width="3100" height="1344" alt="Gemini_Generated_Image_9padc99padc99pad" src="https://github.com/user-attachments/assets/21868157-f222-49a9-b4fa-1e0644f15bc6" />
 
 **Give Claude full access to your BambooHR — employees, time off, hiring, benefits, training, and more.**
 
