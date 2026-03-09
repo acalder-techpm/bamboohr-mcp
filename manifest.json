@@ -1,0 +1,41 @@
+{
+  "manifest_version": "0.3",
+  "name": "bamboohr-mcp",
+  "version": "0.1.0",
+  "display_name": "BambooHR",
+  "description": "Connects Claude to BambooHR — employees, time off, ATS, benefits, training, goals, and more via 74 tools.",
+  "author": {
+    "name": "Adam Calder",
+    "email": "adam.calder@bamboohr.com",
+    "url": "https://github.com/acalder-techpm/bamboohr-mcp"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "BAMBOOHR_API_KEY": "${user_config.BAMBOOHR_API_KEY}",
+        "BAMBOOHR_SUBDOMAIN": "${user_config.BAMBOOHR_SUBDOMAIN}"
+      }
+    }
+  },
+  "user_config": {
+    "BAMBOOHR_API_KEY": {
+      "type": "string",
+      "title": "BambooHR API Key",
+      "description": "Your BambooHR API key (from Profile icon > API Keys > Add New Key)",
+      "sensitive": true,
+      "required": true
+    },
+    "BAMBOOHR_SUBDOMAIN": {
+      "type": "string",
+      "title": "BambooHR Subdomain",
+      "description": "Your BambooHR subdomain (e.g. 'acme' from acme.bamboohr.com)",
+      "sensitive": false,
+      "required": true
+    }
+  },
+  "tools_generated": true
+}
