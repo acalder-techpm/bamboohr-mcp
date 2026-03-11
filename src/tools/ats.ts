@@ -28,7 +28,10 @@ export const atsTools = [
         jobTitle: { type: "string" },
         department: { type: "string" },
         location: { type: "string" },
-        hiringLead: { type: "string", description: "Employee ID of the hiring lead" },
+        hiringLead: {
+          type: "string",
+          description: "Employee ID of the hiring lead",
+        },
         description: { type: "string" },
         employmentType: {
           type: "string",
@@ -46,7 +49,8 @@ export const atsTools = [
   },
   {
     name: "bamboohr_get_company_locations",
-    description: "Get all company locations used in job postings and employee records.",
+    description:
+      "Get all company locations used in job postings and employee records.",
     inputSchema: { type: "object" as const, properties: {} },
     annotations: { readOnlyHint: true },
     async execute() {
@@ -66,8 +70,14 @@ export const atsTools = [
         email: { type: "string" },
         phone: { type: "string" },
         address: { type: "string" },
-        jobId: { type: "string", description: "Job opening ID to associate this candidate with" },
-        resume: { type: "string", description: "Plain-text resume or cover note" },
+        jobId: {
+          type: "string",
+          description: "Job opening ID to associate this candidate with",
+        },
+        resume: {
+          type: "string",
+          description: "Plain-text resume or cover note",
+        },
       },
       required: ["firstName", "lastName"],
     },
@@ -86,7 +96,10 @@ export const atsTools = [
       type: "object" as const,
       properties: {
         jobId: { type: "string" },
-        statusId: { type: "string", description: "Filter by applicant status ID" },
+        statusId: {
+          type: "string",
+          description: "Filter by applicant status ID",
+        },
       },
       required: ["jobId"],
     },
@@ -96,7 +109,10 @@ export const atsTools = [
       const parsed = GetJobApplicationsSchema.parse(input);
       const params: Record<string, string> = {};
       if (parsed.statusId) params.statusId = parsed.statusId;
-      return client.get(`/applicant_tracking/jobs/${parsed.jobId}/applications`, params);
+      return client.get(
+        `/applicant_tracking/jobs/${parsed.jobId}/applications`,
+        params,
+      );
     },
   },
   {
@@ -128,7 +144,7 @@ export const atsTools = [
       const parsed = UpdateApplicantStatusSchema.parse(input);
       return client.post(
         `/applicant_tracking/applications/${parsed.applicationId}/status`,
-        { statusId: parsed.statusId, note: parsed.note ?? "" }
+        { statusId: parsed.statusId, note: parsed.note ?? "" },
       );
     },
   },
@@ -148,7 +164,7 @@ export const atsTools = [
       const client = getClient();
       return client.post(
         `/applicant_tracking/applications/${input.applicationId}/comments`,
-        { comment: input.comment }
+        { comment: input.comment },
       );
     },
   },
