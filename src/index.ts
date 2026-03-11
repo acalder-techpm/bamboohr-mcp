@@ -10,30 +10,20 @@ import axios from "axios";
 import { BambooHRClient } from "./client.js";
 import { setClient } from "./context.js";
 
-import { employeeTools } from "./tools/employees.js";
-import { timeOffTools } from "./tools/time-off.js";
-import { timeTrackingTools } from "./tools/time-tracking.js";
-import { atsTools } from "./tools/ats.js";
-import { benefitsTools } from "./tools/benefits.js";
-import { reportsTools } from "./tools/reports.js";
-import { trainingTools } from "./tools/training.js";
-import { goalsTools } from "./tools/goals.js";
-import { webhooksTools } from "./tools/webhooks.js";
-import { filesTools } from "./tools/files.js";
-import { accountTools } from "./tools/account.js";
+import { getEnabledTools, type ToolDef } from "./modules.js";
 
 // ─── Validate env vars on startup ────────────────────────────────────────────
 if (!process.env.BAMBOOHR_API_KEY) {
   process.stderr.write(
     "ERROR: BAMBOOHR_API_KEY environment variable is required.\n" +
-      "Get your API key at: https://yourcompany.bamboohr.com/settings/api.php\n"
+      "Get your API key at: https://yourcompany.bamboohr.com/settings/api.php\n",
   );
   process.exit(1);
 }
 if (!process.env.BAMBOOHR_SUBDOMAIN) {
   process.stderr.write(
     "ERROR: BAMBOOHR_SUBDOMAIN environment variable is required.\n" +
-      "This is the subdomain of your BambooHR URL (e.g. 'acme' from acme.bamboohr.com).\n"
+      "This is the subdomain of your BambooHR URL (e.g. 'acme' from acme.bamboohr.com).\n",
   );
   process.exit(1);
 }
@@ -47,39 +37,11 @@ setClient(client);
 
 // ─── Read version from package.json ──────────────────────────────────────────
 const pkg = JSON.parse(
-  readFileSync(new URL("../package.json", import.meta.url), "utf-8")
+  readFileSync(new URL("../package.json", import.meta.url), "utf-8"),
 );
 
-// ─── Merge all tools ─────────────────────────────────────────────────────────
-type ToolDef = {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: "object";
-    properties: Record<string, unknown>;
-    required?: string[];
-  };
-  annotations?: {
-    readOnlyHint?: boolean;
-    destructiveHint?: boolean;
-  };
-  execute: (input: unknown) => Promise<unknown>;
-};
-
-const allTools: ToolDef[] = [
-  ...employeeTools,
-  ...timeOffTools,
-  ...timeTrackingTools,
-  ...atsTools,
-  ...benefitsTools,
-  ...reportsTools,
-  ...trainingTools,
-  ...goalsTools,
-  ...webhooksTools,
-  ...filesTools,
-  ...accountTools,
-] as ToolDef[];
-
+// ─── Resolve enabled modules and tools ────────────────────────────────────────
+const { tools: allTools, enabled, disabled, readonlyMode } = getEnabledTools();
 const toolMap = new Map<string, ToolDef>(allTools.map((t) => [t.name, t]));
 
 // ─── Server setup ─────────────────────────────────────────────────────────────
@@ -90,7 +52,7 @@ const server = new Server(
   },
   {
     capabilities: { tools: {} },
-  }
+  },
 );
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
@@ -119,7 +81,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       content: [
         {
           type: "text",
-          text: typeof result === "string" ? result : JSON.stringify(result, null, 2),
+          text:
+            typeof result === "string"
+              ? result
+              : JSON.stringify(result, null, 2),
         },
       ],
     };
@@ -144,7 +109,9 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   process.stderr.write(
-    `bamboohr-mcp v${pkg.version} running | subdomain: ${process.env.BAMBOOHR_SUBDOMAIN} | ${allTools.length} tools loaded\n`
+    `bamboohr-mcp v${pkg.version} running | subdomain: ${process.env.BAMBOOHR_SUBDOMAIN} | ` +
+      `${allTools.length} tools loaded${readonlyMode ? " (read-only)" : ""}\n` +
+      (disabled.length ? `  disabled modules: ${disabled.join(", ")}\n` : ""),
   );
 }
 

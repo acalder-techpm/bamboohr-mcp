@@ -106,47 +106,118 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 
 ---
 
+## Module Selection
+
+If you only need a subset of the available modules, you may disable them with `USE_*` environment variables or CLI args.
+
+All modules are **enabled by default**. Set any to `"false"` to disable:
+
+| Env var             | Module              | Tools |
+| ------------------- | ------------------- | ----- |
+| `USE_EMPLOYEES`     | Employees           | 6     |
+| `USE_TIME_OFF`      | Time Off            | 8     |
+| `USE_TIME_TRACKING` | Time Tracking       | 6     |
+| `USE_ATS`           | Applicant Tracking  | 9     |
+| `USE_BENEFITS`      | Benefits            | 7     |
+| `USE_REPORTS`       | Reports & Datasets  | 5     |
+| `USE_TRAINING`      | Training            | 6     |
+| `USE_GOALS`         | Goals & Performance | 7     |
+| `USE_WEBHOOKS`      | Webhooks            | 7     |
+| `USE_FILES`         | Files               | 6     |
+| `USE_ACCOUNT`       | Account & Metadata  | 7     |
+
+**Example — only Employees, Time Off, and Reports:**
+
+```json
+{
+  "mcpServers": {
+    "bamboohr": {
+      "command": "npx",
+      "args": ["-y", "bamboohr-mcp"],
+      "env": {
+        "BAMBOOHR_API_KEY": "your-api-key-here",
+        "BAMBOOHR_SUBDOMAIN": "your-company-subdomain",
+        "USE_TIME_TRACKING": "false",
+        "USE_ATS": "false",
+        "USE_BENEFITS": "false",
+        "USE_TRAINING": "false",
+        "USE_GOALS": "false",
+        "USE_WEBHOOKS": "false",
+        "USE_FILES": "false",
+        "USE_ACCOUNT": "false"
+      }
+    }
+  }
+}
+```
+
+**CLI args** work too and take precedence over env vars:
+
+```bash
+npx -y bamboohr-mcp --use-ats=false --use-webhooks=false --use-goals=false
+```
+
+### Read-Only Mode
+
+Set `READONLY_MODE=true` to exclude non-read-only tools.
+
+```json
+{
+  "env": {
+    "BAMBOOHR_API_KEY": "your-api-key-here",
+    "BAMBOOHR_SUBDOMAIN": "your-company-subdomain",
+    "READONLY_MODE": "true"
+  }
+}
+```
+
+Or via CLI: `npx -y bamboohr-mcp --readonly`
+
+Read-only mode composes with module selection — e.g. `USE_ATS=false` + `READONLY_MODE=true` gives only the read-only tools from the remaining 10 modules.
+
+---
+
 ## Available Tools
 
 <details>
 <summary><strong>👤 Employees</strong> — 6 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_get_employee` | Get an employee record by ID |
-| `bamboohr_list_employees` | List all employees in the directory |
-| `bamboohr_create_employee` | Create a new employee |
-| `bamboohr_update_employee` | Update employee fields |
+| Tool                                | Description                           |
+| ----------------------------------- | ------------------------------------- |
+| `bamboohr_get_employee`             | Get an employee record by ID          |
+| `bamboohr_list_employees`           | List all employees in the directory   |
+| `bamboohr_create_employee`          | Create a new employee                 |
+| `bamboohr_update_employee`          | Update employee fields                |
 | `bamboohr_get_updated_employee_ids` | Get IDs of recently changed employees |
-| `bamboohr_get_company_info` | Get company account details |
+| `bamboohr_get_company_info`         | Get company account details           |
 
 </details>
 
 <details>
 <summary><strong>🏖️ Time Off</strong> — 8 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_get_time_off_types` | List all leave types |
-| `bamboohr_get_time_off_policies` | List all time-off policies |
-| `bamboohr_get_time_off_requests` | Get requests by date range, status, employee |
-| `bamboohr_create_time_off_request` | Submit a time-off request |
-| `bamboohr_update_time_off_request_status` | Approve, deny, or cancel a request |
-| `bamboohr_get_time_off_balance` | Get leave balances for an employee |
-| `bamboohr_get_whos_out` | See who is out during a date range |
-| `bamboohr_assign_time_off_policies` | Assign policies to an employee |
+| Tool                                      | Description                                  |
+| ----------------------------------------- | -------------------------------------------- |
+| `bamboohr_get_time_off_types`             | List all leave types                         |
+| `bamboohr_get_time_off_policies`          | List all time-off policies                   |
+| `bamboohr_get_time_off_requests`          | Get requests by date range, status, employee |
+| `bamboohr_create_time_off_request`        | Submit a time-off request                    |
+| `bamboohr_update_time_off_request_status` | Approve, deny, or cancel a request           |
+| `bamboohr_get_time_off_balance`           | Get leave balances for an employee           |
+| `bamboohr_get_whos_out`                   | See who is out during a date range           |
+| `bamboohr_assign_time_off_policies`       | Assign policies to an employee               |
 
 </details>
 
 <details>
 <summary><strong>⏱️ Time Tracking</strong> — 5 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_get_timesheet_entries` | Get clock/hour entries |
-| `bamboohr_clock_in` / `bamboohr_clock_out` | Record clock events |
-| `bamboohr_create_hour_entries` | Submit hour entries |
-| `bamboohr_list_break_policies` | List break policies |
+| Tool                                        | Description              |
+| ------------------------------------------- | ------------------------ |
+| `bamboohr_get_timesheet_entries`            | Get clock/hour entries   |
+| `bamboohr_clock_in` / `bamboohr_clock_out`  | Record clock events      |
+| `bamboohr_create_hour_entries`              | Submit hour entries      |
+| `bamboohr_list_break_policies`              | List break policies      |
 | `bamboohr_list_employee_break_availability` | Check break availability |
 
 </details>
@@ -154,87 +225,87 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 <details>
 <summary><strong>🎯 Applicant Tracking (ATS)</strong> — 9 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_list_job_summaries` | List all job openings |
-| `bamboohr_create_job_opening` | Create a new job opening |
-| `bamboohr_create_candidate` | Create a candidate record |
-| `bamboohr_get_job_applications` | Get applications for a job |
-| `bamboohr_get_applicant_statuses` | List pipeline stages |
+| Tool                               | Description                     |
+| ---------------------------------- | ------------------------------- |
+| `bamboohr_list_job_summaries`      | List all job openings           |
+| `bamboohr_create_job_opening`      | Create a new job opening        |
+| `bamboohr_create_candidate`        | Create a candidate record       |
+| `bamboohr_get_job_applications`    | Get applications for a job      |
+| `bamboohr_get_applicant_statuses`  | List pipeline stages            |
 | `bamboohr_update_applicant_status` | Move a candidate to a new stage |
-| `bamboohr_add_application_comment` | Add a note to an application |
-| `bamboohr_get_hiring_leads` | List available hiring leads |
-| `bamboohr_get_company_locations` | List company locations |
+| `bamboohr_add_application_comment` | Add a note to an application    |
+| `bamboohr_get_hiring_leads`        | List available hiring leads     |
+| `bamboohr_get_company_locations`   | List company locations          |
 
 </details>
 
 <details>
 <summary><strong>🏥 Benefits</strong> — 7 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_get_company_benefits` | List all benefit plans |
-| `bamboohr_get_employee_benefits` | Get an employee's enrollments |
-| `bamboohr_get_benefit_coverages` | List coverage tiers |
-| `bamboohr_get_benefit_deduction_types` | List deduction types |
-| `bamboohr_get_employee_dependents` | List an employee's dependents |
-| `bamboohr_create_employee_dependent` | Add a dependent |
-| `bamboohr_get_member_benefit_events` | Get benefit life events |
+| Tool                                   | Description                   |
+| -------------------------------------- | ----------------------------- |
+| `bamboohr_get_company_benefits`        | List all benefit plans        |
+| `bamboohr_get_employee_benefits`       | Get an employee's enrollments |
+| `bamboohr_get_benefit_coverages`       | List coverage tiers           |
+| `bamboohr_get_benefit_deduction_types` | List deduction types          |
+| `bamboohr_get_employee_dependents`     | List an employee's dependents |
+| `bamboohr_create_employee_dependent`   | Add a dependent               |
+| `bamboohr_get_member_benefit_events`   | Get benefit life events       |
 
 </details>
 
 <details>
 <summary><strong>📊 Reports & Datasets</strong> — 5 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_list_reports` | List all saved reports |
-| `bamboohr_run_report` | Run a report by ID |
-| `bamboohr_list_datasets` | List available datasets |
-| `bamboohr_get_dataset_fields` | Get fields for a dataset |
-| `bamboohr_query_dataset` | Query a dataset with filters |
+| Tool                          | Description                  |
+| ----------------------------- | ---------------------------- |
+| `bamboohr_list_reports`       | List all saved reports       |
+| `bamboohr_run_report`         | Run a report by ID           |
+| `bamboohr_list_datasets`      | List available datasets      |
+| `bamboohr_get_dataset_fields` | Get fields for a dataset     |
+| `bamboohr_query_dataset`      | Query a dataset with filters |
 
 </details>
 
 <details>
 <summary><strong>🎓 Training</strong> — 6 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_get_training_categories` | List training categories |
-| `bamboohr_get_training_types` | List training types/courses |
-| `bamboohr_create_training_type` | Create a training type |
-| `bamboohr_get_employee_trainings` | Get an employee's training records |
-| `bamboohr_create_training_record` | Assign training to an employee |
-| `bamboohr_update_training_record` | Update a training record |
+| Tool                               | Description                        |
+| ---------------------------------- | ---------------------------------- |
+| `bamboohr_get_training_categories` | List training categories           |
+| `bamboohr_get_training_types`      | List training types/courses        |
+| `bamboohr_create_training_type`    | Create a training type             |
+| `bamboohr_get_employee_trainings`  | Get an employee's training records |
+| `bamboohr_create_training_record`  | Assign training to an employee     |
+| `bamboohr_update_training_record`  | Update a training record           |
 
 </details>
 
 <details>
 <summary><strong>🏆 Goals & Performance</strong> — 7 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_list_goals` | Get goals for an employee |
-| `bamboohr_get_goals_aggregate` | Get goal summary/stats |
-| `bamboohr_create_goal` | Create a performance goal |
-| `bamboohr_update_goal_progress` | Update percent complete |
-| `bamboohr_close_goal` / `bamboohr_reopen_goal` | Close or reopen a goal |
-| `bamboohr_get_goal_status_counts` | Get goal status breakdown |
+| Tool                                           | Description               |
+| ---------------------------------------------- | ------------------------- |
+| `bamboohr_list_goals`                          | Get goals for an employee |
+| `bamboohr_get_goals_aggregate`                 | Get goal summary/stats    |
+| `bamboohr_create_goal`                         | Create a performance goal |
+| `bamboohr_update_goal_progress`                | Update percent complete   |
+| `bamboohr_close_goal` / `bamboohr_reopen_goal` | Close or reopen a goal    |
+| `bamboohr_get_goal_status_counts`              | Get goal status breakdown |
 
 </details>
 
 <details>
 <summary><strong>🔔 Webhooks</strong> — 7 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_list_webhooks` | List all webhooks |
-| `bamboohr_get_webhook` | Get webhook details |
-| `bamboohr_create_webhook` | Create a new webhook |
-| `bamboohr_update_webhook` | Update a webhook |
-| `bamboohr_delete_webhook` | Delete a webhook |
-| `bamboohr_get_webhook_logs` | View delivery logs |
+| Tool                                  | Description             |
+| ------------------------------------- | ----------------------- |
+| `bamboohr_list_webhooks`              | List all webhooks       |
+| `bamboohr_get_webhook`                | Get webhook details     |
+| `bamboohr_create_webhook`             | Create a new webhook    |
+| `bamboohr_update_webhook`             | Update a webhook        |
+| `bamboohr_delete_webhook`             | Delete a webhook        |
+| `bamboohr_get_webhook_logs`           | View delivery logs      |
 | `bamboohr_get_webhook_monitor_fields` | List monitorable fields |
 
 </details>
@@ -242,28 +313,28 @@ Open Claude and ask: **"Show me the BambooHR employee directory"**
 <details>
 <summary><strong>📁 Files</strong> — 6 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_get_employee_files` | List files for an employee |
-| `bamboohr_get_employee_file` | Download a specific file |
-| `bamboohr_upload_employee_file` | Upload a file to an employee |
-| `bamboohr_delete_employee_file` | Delete an employee file |
-| `bamboohr_get_company_files` | List company-level files |
-| `bamboohr_create_employee_file_category` | Create a file category |
+| Tool                                     | Description                  |
+| ---------------------------------------- | ---------------------------- |
+| `bamboohr_get_employee_files`            | List files for an employee   |
+| `bamboohr_get_employee_file`             | Download a specific file     |
+| `bamboohr_upload_employee_file`          | Upload a file to an employee |
+| `bamboohr_delete_employee_file`          | Delete an employee file      |
+| `bamboohr_get_company_files`             | List company-level files     |
+| `bamboohr_create_employee_file_category` | Create a file category       |
 
 </details>
 
 <details>
 <summary><strong>⚙️ Account & Metadata</strong> — 7 tools</summary>
 
-| Tool | Description |
-|------|-------------|
-| `bamboohr_get_fields` | List all employee fields |
-| `bamboohr_get_tabular_fields` | List tabular fields |
-| `bamboohr_get_users` | List BambooHR user accounts |
-| `bamboohr_get_countries` | List countries |
-| `bamboohr_get_states` | List states for a country |
-| `bamboohr_get_list_field_details` | Get options for a list field |
+| Tool                                | Description                   |
+| ----------------------------------- | ----------------------------- |
+| `bamboohr_get_fields`               | List all employee fields      |
+| `bamboohr_get_tabular_fields`       | List tabular fields           |
+| `bamboohr_get_users`                | List BambooHR user accounts   |
+| `bamboohr_get_countries`            | List countries                |
+| `bamboohr_get_states`               | List states for a country     |
+| `bamboohr_get_list_field_details`   | Get options for a list field  |
 | `bamboohr_update_list_field_values` | Add/update list field options |
 
 </details>
@@ -282,99 +353,107 @@ cp -r skills/* ~/.claude/skills/
 ---
 
 ### 🗂️ HR Admin
-*For the people running day-to-day HR operations.*
 
-| Skill | Try saying... |
-|-------|--------------|
-| `onboard-employee` | "Onboard Sarah Chen starting Monday in Engineering" |
-| `offboard-employee` | "Process termination for Bob Lee, last day is Friday" |
+_For the people running day-to-day HR operations._
+
+| Skill                 | Try saying...                                           |
+| --------------------- | ------------------------------------------------------- |
+| `onboard-employee`    | "Onboard Sarah Chen starting Monday in Engineering"     |
+| `offboard-employee`   | "Process termination for Bob Lee, last day is Friday"   |
 | `bulk-update-records` | "Update all Engineering employees to the Austin office" |
-| `manage-documents` | "Show me Jane Doe's employee files" |
-| `sync-org-changes` | "Move Alex to the Platform team reporting to Maria" |
-| `audit-employee-data` | "Find all employees missing a work email" |
+| `manage-documents`    | "Show me Jane Doe's employee files"                     |
+| `sync-org-changes`    | "Move Alex to the Platform team reporting to Maria"     |
+| `audit-employee-data` | "Find all employees missing a work email"               |
 
 ---
 
 ### 📈 HR Manager / HRBP
-*For strategic HR visibility, analytics, and reporting.*
 
-| Skill | Try saying... |
-|-------|--------------|
-| `headcount-report` | "Headcount report by department" |
-| `workforce-snapshot` | "Give me a workforce snapshot" |
-| `run-custom-report` | "Run a report of all employees in California" |
+_For strategic HR visibility, analytics, and reporting._
+
+| Skill                  | Try saying...                                   |
+| ---------------------- | ----------------------------------------------- |
+| `headcount-report`     | "Headcount report by department"                |
+| `workforce-snapshot`   | "Give me a workforce snapshot"                  |
+| `run-custom-report`    | "Run a report of all employees in California"   |
 | `performance-overview` | "Performance overview for the Engineering team" |
-| `new-hire-trends` | "Show new hires for Q1 2025" |
+| `new-hire-trends`      | "Show new hires for Q1 2025"                    |
 
 ---
 
 ### 🎯 Recruiter / Talent Acquisition
-*For managing job openings, candidates, and hiring pipelines.*
 
-| Skill | Try saying... |
-|-------|--------------|
-| `post-job-opening` | "Post a Senior Engineer role in Austin, TX" |
-| `review-pipeline` | "Review the pipeline for the Product Manager role" |
-| `advance-candidate` | "Move Jane Smith to the Final Interview stage" |
-| `hiring-velocity-report` | "What's our average time-to-fill?" |
+_For managing job openings, candidates, and hiring pipelines._
+
+| Skill                    | Try saying...                                      |
+| ------------------------ | -------------------------------------------------- |
+| `post-job-opening`       | "Post a Senior Engineer role in Austin, TX"        |
+| `review-pipeline`        | "Review the pipeline for the Product Manager role" |
+| `advance-candidate`      | "Move Jane Smith to the Final Interview stage"     |
+| `hiring-velocity-report` | "What's our average time-to-fill?"                 |
 
 ---
 
 ### 👔 Manager / Team Lead
-*For team-level visibility and day-to-day approvals.*
 
-| Skill | Try saying... |
-|-------|--------------|
-| `approve-time-off` | "Review pending PTO requests for my team" |
-| `team-availability` | "Who's out next week?" |
-| `team-directory` | "Show me my team roster" |
-| `review-team-goals` | "Show team goal progress for Q2" |
-| `approve-timesheets` | "Review timesheets for last week" |
+_For team-level visibility and day-to-day approvals._
+
+| Skill                | Try saying...                             |
+| -------------------- | ----------------------------------------- |
+| `approve-time-off`   | "Review pending PTO requests for my team" |
+| `team-availability`  | "Who's out next week?"                    |
+| `team-directory`     | "Show me my team roster"                  |
+| `review-team-goals`  | "Show team goal progress for Q2"          |
+| `approve-timesheets` | "Review timesheets for last week"         |
 
 ---
 
 ### 🙋 Employee Self-Service
-*For employees managing their own HR needs.*
 
-| Skill | Try saying... |
-|-------|--------------|
-| `request-time-off` | "Request 3 days off starting June 10" |
-| `check-leave-balance` | "How many PTO days do I have left?" |
-| `update-profile` | "Update my home address in BambooHR" |
-| `view-my-trainings` | "What trainings am I assigned?" |
+_For employees managing their own HR needs._
+
+| Skill                 | Try saying...                         |
+| --------------------- | ------------------------------------- |
+| `request-time-off`    | "Request 3 days off starting June 10" |
+| `check-leave-balance` | "How many PTO days do I have left?"   |
+| `update-profile`      | "Update my home address in BambooHR"  |
+| `view-my-trainings`   | "What trainings am I assigned?"       |
 
 ---
 
 ### 💼 Payroll & Benefits Admin
-*For managing benefits enrollment and compensation data.*
 
-| Skill | Try saying... |
-|-------|--------------|
-| `benefits-status-check` | "Check benefits enrollment for John Doe" |
-| `dependent-enrollment` | "Add a dependent for Sarah Chen — newborn daughter" |
-| `compensation-audit` | "Run a compensation audit for Engineering" |
+_For managing benefits enrollment and compensation data._
+
+| Skill                   | Try saying...                                       |
+| ----------------------- | --------------------------------------------------- |
+| `benefits-status-check` | "Check benefits enrollment for John Doe"            |
+| `dependent-enrollment`  | "Add a dependent for Sarah Chen — newborn daughter" |
+| `compensation-audit`    | "Run a compensation audit for Engineering"          |
 
 ---
 
 ### 🎓 Training & L&D
-*For tracking learning programs and compliance.*
 
-| Skill | Try saying... |
-|-------|--------------|
-| `assign-training` | "Assign HIPAA training to all new hires in HR" |
-| `compliance-report` | "Training compliance report for Q2" |
-| `manage-catalog` | "Show our full training catalog" |
+_For tracking learning programs and compliance._
+
+| Skill               | Try saying...                                  |
+| ------------------- | ---------------------------------------------- |
+| `assign-training`   | "Assign HIPAA training to all new hires in HR" |
+| `compliance-report` | "Training compliance report for Q2"            |
+| `manage-catalog`    | "Show our full training catalog"               |
 
 ---
 
 ### ⚡ Automation Admin
-*For teams integrating BambooHR with other systems via webhooks.*
 
-| Skill | Try saying... |
-|-------|--------------|
-| `setup-webhook` | "Create a webhook that fires when job title changes" |
-| `debug-webhook` | "Show recent webhook logs for my HRIS sync" |
-| `automation-overview` | "What automations are connected to BambooHR?" |
+_For teams integrating BambooHR with other systems via webhooks._
+
+| Skill                 | Try saying...                                        |
+| --------------------- | ---------------------------------------------------- |
+| `setup-webhook`       | "Create a webhook that fires when job title changes" |
+| `debug-webhook`       | "Show recent webhook logs for my HRIS sync"          |
+| `automation-overview` | "What automations are connected to BambooHR?"        |
 
 ---
 
@@ -424,6 +503,7 @@ Here are three real-world examples showing how Claude uses this MCP server.
 **What happens:** Claude calls `bamboohr_get_whos_out` with next week's date range, then cross-references with `bamboohr_list_employees` filtered to Engineering. It returns a summary like:
 
 > 3 people out next week in Engineering:
+>
 > - **Sarah Chen** - PTO Mon-Wed
 > - **James Park** - Sick leave Monday
 > - **Lisa Nguyen** - PTO all week
@@ -437,6 +517,7 @@ Here are three real-world examples showing how Claude uses this MCP server.
 **What happens:** Claude calls `bamboohr_create_employee` with the provided details, then calls `bamboohr_assign_time_off_policies` to set up standard PTO. It returns:
 
 > Created employee record for **Maria Torres** (ID: 4521)
+>
 > - Department: Platform
 > - Job Title: Software Engineer
 > - Location: Austin, TX
@@ -453,6 +534,7 @@ Here are three real-world examples showing how Claude uses this MCP server.
 > **HIPAA Training Compliance - HR Department**
 >
 > 2 of 8 team members overdue:
+>
 > - **Tom Rivera** - due Feb 15, 2026 (22 days overdue)
 > - **Amy Walsh** - due Mar 1, 2026 (9 days overdue)
 >

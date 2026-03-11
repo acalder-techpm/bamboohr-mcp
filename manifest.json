@@ -17,7 +17,19 @@
       "args": ["${__dirname}/dist/index.js"],
       "env": {
         "BAMBOOHR_API_KEY": "${user_config.BAMBOOHR_API_KEY}",
-        "BAMBOOHR_SUBDOMAIN": "${user_config.BAMBOOHR_SUBDOMAIN}"
+        "BAMBOOHR_SUBDOMAIN": "${user_config.BAMBOOHR_SUBDOMAIN}",
+        "READONLY_MODE": "${user_config.READONLY_MODE}",
+        "USE_EMPLOYEES": "${user_config.USE_EMPLOYEES}",
+        "USE_TIME_OFF": "${user_config.USE_TIME_OFF}",
+        "USE_TIME_TRACKING": "${user_config.USE_TIME_TRACKING}",
+        "USE_ATS": "${user_config.USE_ATS}",
+        "USE_BENEFITS": "${user_config.USE_BENEFITS}",
+        "USE_REPORTS": "${user_config.USE_REPORTS}",
+        "USE_TRAINING": "${user_config.USE_TRAINING}",
+        "USE_GOALS": "${user_config.USE_GOALS}",
+        "USE_WEBHOOKS": "${user_config.USE_WEBHOOKS}",
+        "USE_FILES": "${user_config.USE_FILES}",
+        "USE_ACCOUNT": "${user_config.USE_ACCOUNT}"
       }
     }
   },
@@ -35,6 +47,90 @@
       "description": "Your BambooHR subdomain (e.g. 'acme' from acme.bamboohr.com)",
       "sensitive": false,
       "required": true
+    },
+    "READONLY_MODE": {
+      "type": "string",
+      "title": "Read-Only Mode",
+      "description": "Set to 'true' to disable all write/destructive tools (default: false)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_EMPLOYEES": {
+      "type": "string",
+      "title": "Enable Employees module",
+      "description": "Set to 'false' to disable the Employees module (default: true)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_TIME_OFF": {
+      "type": "string",
+      "title": "Enable Time Off module",
+      "description": "Set to 'false' to disable the Time Off module (default: true)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_TIME_TRACKING": {
+      "type": "string",
+      "title": "Enable Time Tracking module",
+      "description": "Set to 'false' to disable the Time Tracking module (default: true)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_ATS": {
+      "type": "string",
+      "title": "Enable ATS module",
+      "description": "Set to 'false' to disable the Applicant Tracking module (default: true)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_BENEFITS": {
+      "type": "string",
+      "title": "Enable Benefits module",
+      "description": "Set to 'false' to disable the Benefits module (default: true)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_REPORTS": {
+      "type": "string",
+      "title": "Enable Reports module",
+      "description": "Set to 'false' to disable the Reports module (default: true)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_TRAINING": {
+      "type": "string",
+      "title": "Enable Training module",
+      "description": "Set to 'false' to disable the Training module (default: true)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_GOALS": {
+      "type": "string",
+      "title": "Enable Goals module",
+      "description": "Set to 'false' to disable the Goals module (default: true)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_WEBHOOKS": {
+      "type": "string",
+      "title": "Enable Webhooks module",
+      "description": "Set to 'false' to disable the Webhooks module (default: true)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_FILES": {
+      "type": "string",
+      "title": "Enable Files module",
+      "description": "Set to 'false' to disable the Files module (default: true)",
+      "sensitive": false,
+      "required": false
+    },
+    "USE_ACCOUNT": {
+      "type": "string",
+      "title": "Enable Account module",
+      "description": "Set to 'false' to disable the Account & Metadata module (default: true)",
+      "sensitive": false,
+      "required": false
     }
   },
   "tools_generated": true
